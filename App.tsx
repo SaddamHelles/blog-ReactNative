@@ -1,20 +1,85 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+// In App.js in a new project
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import { Ionicons } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import { BlogProvider } from './src/context/BlogContext';
+import EditScreen from './src/screens/EditScreen';
+import HomeScreen from './src/screens/HomeScreen';
+import ShowScreen from './src/screens/ShowScreen';
+import CreateBlogScreen from './src/screens/CreateBlogScreen';
+export type RootStackParamList = {
+    Home: undefined;
+    ShowScreen: { id: string };
+    CreateBlogScreen: undefined;
+    EditScreen: { id: string };
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+function App() {
+    return (
+        <BlogProvider>
+            <NavigationContainer>
+                <Stack.Navigator
+                    screenOptions={{
+                        title: 'Blog',
+                        statusBarColor: '#f8bdff',
+                        navigationBarColor: '#f8bdff',
+                        headerTintColor: '#550370',
+                        statusBarStyle: 'dark',
+                        contentStyle: { backgroundColor: 'white' },
+                    }}>
+                    <Stack.Screen
+                        name="Home"
+                        component={HomeScreen}
+                        options={({ navigation }) => ({
+                            headerRight: () => (
+                                <TouchableOpacity
+                                    onPress={() =>
+                                        navigation.navigate('CreateBlogScreen')
+                                    }>
+                                    <Ionicons
+                                        name="add-circle-outline"
+                                        size={30}
+                                        color="black"
+                                    />
+                                </TouchableOpacity>
+                            ),
+                        })}
+                    />
+                    <Stack.Screen
+                        name="ShowScreen"
+                        component={ShowScreen}
+                        options={({ navigation, route }) => ({
+                            headerRight: () => (
+                                <TouchableOpacity
+                                    onPress={() =>
+                                        navigation.navigate(
+                                            'EditScreen',
+                                            route.params
+                                        )
+                                    }>
+                                    <FontAwesome
+                                        name="edit"
+                                        size={30}
+                                        color="black"
+                                    />
+                                </TouchableOpacity>
+                            ),
+                        })}
+                    />
+                    <Stack.Screen
+                        name="CreateBlogScreen"
+                        component={CreateBlogScreen}
+                    />
+                    <Stack.Screen name="EditScreen" component={EditScreen} />
+                </Stack.Navigator>
+            </NavigationContainer>
+        </BlogProvider>
+    );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
