@@ -16,11 +16,16 @@ const ShowScreen = ({ route }: Props) => {
     const blogPost = data.find(blog => blog.id === id);
     return (
         <View>
-            <Text>{blogPost?.title}</Text>
+            <Text style={styles.contentStyle}>{blogPost?.content}</Text>
         </View>
     );
 };
 
 export default ShowScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    contentStyle: {
+        fontSize: 24,
+        margin: 10,
+    },
+});

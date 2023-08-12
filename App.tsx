@@ -13,7 +13,7 @@ import ShowScreen from './src/screens/ShowScreen';
 import CreateBlogScreen from './src/screens/CreateBlogScreen';
 export type RootStackParamList = {
     Home: undefined;
-    ShowScreen: { id: string };
+    ShowScreen: { id: string; title?: string };
     CreateBlogScreen: undefined;
     EditScreen: { id: string };
 };
@@ -69,6 +69,7 @@ function App() {
                                     />
                                 </TouchableOpacity>
                             ),
+                            headerTitle: route.params.title?.toUpperCase(),
                         })}
                     />
                     <Stack.Screen

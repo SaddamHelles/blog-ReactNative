@@ -26,10 +26,11 @@ interface HomeScreenProps {
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
-    const { data, deleteBlogPost } = useContext(BlogContext);
+    const { data, deleteBlogPost, getBlogPosts } = useContext(BlogContext);
 
     useEffect(() => {
-        console.log(data);
+        console.log('use');
+        getBlogPosts();
     }, []);
     return (
         <View>
@@ -39,7 +40,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                 renderItem={({ item }) => (
                     <TouchableOpacity
                         onPress={() =>
-                            navigation.navigate('ShowScreen', { id: item.id })
+                            navigation.navigate('ShowScreen', {
+                                id: item.id,
+                                title: item.title,
+                            })
                         }>
                         <View style={styles.row}>
                             <Text style={styles.title}>{item.title}</Text>

@@ -1,10 +1,11 @@
-import { Dispatch, createContext, PropsWithChildren, useReducer } from 'react';
-
+import { createContext, PropsWithChildren, useReducer } from 'react';
+import jsonServer from '../api/jsonServer';
 interface ContextProps {
     data: BlogPosts[];
     addBlogPost: (blogPost: BlogPosts, callback: () => void) => void;
     deleteBlogPost: (id: string) => void;
     editBlogPost: (id: BlogPosts, callback: () => void) => void;
+    getBlogPosts: () => void;
 }
 
 type BlogPosts = { id: string; title?: string; content?: string };
@@ -18,19 +19,30 @@ type State = {
 };
 
 enum Actions {
+    GetBlogPosts = 'GetBlogPosts',
     AddBlogPost = 'AddBlogPost',
     DeleteBlogPost = 'DeleteBlogPost',
     EditBlogPost = 'EditBlogPost',
 }
 
-type Action = {
-    payload: BlogPosts;
-    type: Actions;
-};
+// type Action = {
+//     payload: any;
+//     type: Actions;
+// };
+
+type Action =
+    | { type: Actions.GetBlogPosts; payload: BlogPosts[] }
+    | { type: Actions.AddBlogPost; payload: BlogPosts }
+    | { type: Actions.DeleteBlogPost; payload: { id: string; title: string } }
+    | { type: Actions.EditBlogPost; payload: BlogPosts };
 
 const blogReducer = (state: State, action: Action): State => {
     const { type, payload } = action;
     switch (type) {
+        case Actions.GetBlogPosts:
+            console.log();
+            console.log('payload: ', payload);
+            return { ...state, blogs: payload };
         case Actions.AddBlogPost:
             return { ...state, blogs: [...state.blogs, payload] };
         case Actions.DeleteBlogPost:
@@ -55,6 +67,17 @@ const BlogContext = createContext<ContextProps>({} as ContextProps);
 export const BlogProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
     const [state, dispatch] = useReducer(blogReducer, initialState);
 
+    const getBlogPosts = () => {
+        console.log('get posts on');
+        jsonServer
+            .get('/blogposts')
+            .then(response =>
+                dispatch({ type: Actions.GetBlogPosts, payload: response.data })
+            );
+        // console.log(`responseeeeee: `, response);
+        // dispatch({ type: Actions.GetBlogPosts, payload: response.data });
+    };
+
     const addBlogPost = (blog: BlogPosts, callback: () => void) => {
         dispatch({ type: Actions.AddBlogPost, payload: blog });
         callback();
@@ -75,6 +98,7 @@ export const BlogProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
     };
     const contextValues = {
         data: state.blogs,
+        getBlogPosts,
         addBlogPost,
         deleteBlogPost,
         editBlogPost,
