@@ -29,8 +29,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     const { data, deleteBlogPost, getBlogPosts } = useContext(BlogContext);
 
     useEffect(() => {
-        console.log('use');
         getBlogPosts();
+
+        const unsubscribe = navigation.addListener('focus', () =>
+            getBlogPosts()
+        );
+
+        return unsubscribe;
     }, []);
     return (
         <View>

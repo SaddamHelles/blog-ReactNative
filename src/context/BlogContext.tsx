@@ -68,33 +68,45 @@ export const BlogProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
     const [state, dispatch] = useReducer(blogReducer, initialState);
 
     const getBlogPosts = () => {
-        console.log('get posts on');
         jsonServer
             .get('/blogposts')
             .then(response =>
                 dispatch({ type: Actions.GetBlogPosts, payload: response.data })
             );
-        // console.log(`responseeeeee: `, response);
-        // dispatch({ type: Actions.GetBlogPosts, payload: response.data });
     };
 
     const addBlogPost = (blog: BlogPosts, callback: () => void) => {
-        dispatch({ type: Actions.AddBlogPost, payload: blog });
+        jsonServer.post('/blogposts', blog);
+        // .then(response =>
+        //     dispatch({ type: Actions.AddBlogPost, payload: response.data })
+        // );
         callback();
     };
 
     const deleteBlogPost = (id: string) => {
-        dispatch({
-            type: Actions.DeleteBlogPost,
-            payload: { id, title: '' },
-        });
+        try {
+            jsonServer.delete(`/blogposts/${id}`);
+
+            // dispatch({
+            //     type: Actions.DeleteBlogPost,
+            //     payload: { id, title: '' },
+            // });
+        } catch (err) {
+            console.log(err);
+        }
     };
     const editBlogPost = (newBlog: BlogPosts, callback: () => void) => {
-        dispatch({
-            type: Actions.EditBlogPost,
-            payload: newBlog,
-        });
-        callback();
+        try {
+            jsonServer.put(`/blogposts/${newBlog.id}`, newBlog);
+
+            // dispatch({
+            //     type: Actions.EditBlogPost,
+            //     payload: newBlog,
+            // });
+            callback();
+        } catch (err) {
+            console.log(err);
+        }
     };
     const contextValues = {
         data: state.blogs,
